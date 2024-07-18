@@ -1,0 +1,62 @@
+**/.vs
+
+# Build results
+
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+
+Tools/MessagingTestTool/CommonClient/MessagingConfig.xsd
+Cloud/Source/Eze.Ims.Platform.Cloud.Communication/MessagingConfig.xsd
+Desktop/Documentation/ImsHelpDocs.wxs
+Desktop/Source/Eze.Ims.Platform.Desktop.Framework/ShellServices/Services/MessagingConfig.xsd
+
+# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
+!packages/*/build/
+
+
+# OS generated files #
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# NuGet Packages Directory
+## TODO: If you have NuGet Package Restore enabled, uncomment the next line
+packages/
+
+# vim
+*.txt~
+*.swp
+*.swo
+
+# =========================
+# Windows detritus
+# =========================
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac desktop service store files
+.DS_Store
+
+# SASS Compiler cache
+.sass-cache
+
+# Visual Studio 2014 CTP
+**/*.sln.ide
+
