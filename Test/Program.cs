@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Quartz;
+using Quartz.Util;
 
 namespace Test
 {
@@ -8,38 +11,27 @@ namespace Test
 	{
 		public static async Task Main(string[] args)
 		{
-			var builder = Host
-				.CreateDefaultBuilder()
-				.ConfigureServices((ctx, services) =>
+			var tz = TimeZoneUtil.FindTimeZoneById("Greenwich Standard Time");
+			var startDateTime = new DateTime(2025, 3, 29, 1, 30, 0);
+			var startDto = new DateTimeOffset(startDateTime, TimeZoneUtil.GetUtcOffset(startDateTime, tz));
+			var trigger = TriggerBuilder.Create()
+				.WithIdentity("myTrigger", "mygroup")
+				.StartAt(startDto)
+				.WithCalendarIntervalSchedule(sched =>
 				{
-					services.Configure<QuartzOptions>(ctx.Configuration.GetSection("Quartz"));
-					services.AddQuartz(q =>
-					{
-					});
-					services.AddQuartzHostedService(opt =>
-					{
-						opt.WaitForJobsToComplete = true;
-					});
+					sched
+						.InTimeZone(tz)
+						.PreserveHourOfDayAcrossDaylightSavings(true)
+						.SkipDayIfHourDoesNotExist(false)
+						.WithIntervalInDays(1);
 				})
 				.Build();
 
-			var schedulerFactory = builder.Services.GetRequiredService<ISchedulerFactory>();
-			var scheduler = await schedulerFactory.GetScheduler();
-
-			await scheduler.Clear();
-			var job = JobBuilder.Create<MyJob>()
-				.WithIdentity("myJob", "mygroup")
-				.Build();
-			
-			var trigger = TriggerBuilder.Create()
-				.WithIdentity("myTrigger", "mygroup")
-				.StartNow()
-				.WithSchedule(new MyScheduleBuilder())
-				.Build();
-
-			await scheduler.ScheduleJob(job, trigger);
-			
-			await builder.RunAsync();
+			DateTimeOffset? next;
+			do
+			{
+				next = trigger.GetFireTimeAfter(startDto);
+			} while (next < startDto + TimeSpan.FromDays(7));
 		}
 	}
 }
