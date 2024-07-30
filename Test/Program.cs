@@ -11,7 +11,7 @@ namespace Test
 	{
 		public static async Task Main(string[] args)
 		{
-			var tz = TimeZoneUtil.FindTimeZoneById("Greenwich Standard Time");
+			var tz = TimeZoneUtil.FindTimeZoneById("GMT Standard Time");
 			var startDateTime = new DateTime(2025, 3, 29, 1, 30, 0);
 			var startDto = new DateTimeOffset(startDateTime, TimeZoneUtil.GetUtcOffset(startDateTime, tz));
 			var trigger = TriggerBuilder.Create()
@@ -27,10 +27,10 @@ namespace Test
 				})
 				.Build();
 
-			DateTimeOffset? next;
+			DateTimeOffset? next = startDto;
 			do
 			{
-				next = trigger.GetFireTimeAfter(startDto);
+				next = trigger.GetFireTimeAfter(next);
 			} while (next < startDto + TimeSpan.FromDays(7));
 		}
 	}
